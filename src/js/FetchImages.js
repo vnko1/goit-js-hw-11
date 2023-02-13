@@ -7,6 +7,7 @@ export default class FetchImages {
   constructor() {
     this.querySearch = '';
     this.page = 1;
+    this.perPage = 40;
     this.totalHits = null;
   }
   get query() {
@@ -27,6 +28,10 @@ export default class FetchImages {
     return this.page;
   }
 
+  getPerPageValue() {
+    return this.perPage;
+  }
+
   async getImage() {
     const params = new URLSearchParams({
       key: API_KEY,
@@ -35,7 +40,7 @@ export default class FetchImages {
       orientation: 'horizontal',
       safesearch: true,
       page: this.getPageValue(),
-      per_page: 40,
+      per_page: this.getPerPageValue(),
     });
 
     const { data } = await axios.get(`${BASE_URL}?${params}`);

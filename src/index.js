@@ -3,15 +3,16 @@ import SimpleLightbox from 'simplelightbox';
 import FetchImages from './js/FetchImages';
 import LoadMoreButton from './js/components/LoadMoreButton';
 import 'simplelightbox/dist/simple-lightbox.min.css';
-import simpleLightbox from 'simplelightbox';
 
+const noMatchMessage =
+  'Sorry, there are no images matching your search query. Please try again.';
+const finishedImageMessage =
+  "We're sorry, but you've reached the end of search results.";
 const fetchImages = new FetchImages();
 const loadMoreButton = new LoadMoreButton('.load-more', true);
 
 const formEl = document.querySelector('.search-form');
 const imageContainer = document.querySelector('.gallery');
-
-console.log(simpleLightbox);
 
 formEl.addEventListener('submit', onHandleSubmit);
 loadMoreButton.button.addEventListener('click', onHandleClick);
@@ -23,43 +24,39 @@ async function onHandleSubmit(e) {
   fetchImages.resetPage();
   loadMoreButton.hideBtn();
   imageContainer.innerHTML = '';
-  await fetchData();
+  await fetchData().catch(error => failureLog(error.message));
 
-  Notify.info(`Hooray! We found ${fetchImages.totalHits} images.`, {
-    clickToClose: true,
-  });
-  const lightbox = new SimpleLightbox('.gallery a');
+  if (fetchImages.totalHits > 0) {
+    Notify.info(`Hooray! We found ${fetchImages.totalHits} images.`, {
+      clickToClose: true,
+    });
+  }
 }
 
 function onHandleClick() {
   fetchImages.updatePage();
-
-  if (fetchImages.page * 40 > fetchImages.totalHits) {
-    Notify.failure(
-      "We're sorry, but you've reached the end of search results.",
-      { clickToClose: true }
-    );
+  const limit = fetchImages.page * fetchImages.perPage > fetchImages.totalHits;
+  if (limit) {
+    failureLog(finishedImageMessage);
     loadMoreButton.hideBtn();
     return;
   }
-  fetchData();
+  fetchData()
+    .then(gallery => gallery.refresh())
+    .catch(error => failureLog(error.message));
 }
 
 async function fetchData() {
-  await fetchImages
-    .getImage()
-    .then(data => {
-      if (data.hits.length === 0) {
-        Notify.failure(
-          'Sorry, there are no images matching your search query. Please try again.',
-          { clickToClose: true }
-        );
-        return;
-      }
-      markingUp(data.hits);
-      loadMoreButton.showBtn();
-    })
-    .catch(error => Notify.failure(error.message, { clickToClose: true }));
+  return await fetchImages.getImage().then(data => {
+    if (data.hits.length === 0) {
+      failureLog(noMatchMessage);
+      return;
+    }
+    markingUp(data.hits);
+    loadMoreButton.showBtn();
+
+    return new SimpleLightbox('.gallery a');
+  });
 }
 
 function markingUp(data) {
@@ -98,4 +95,8 @@ function markingUp(data) {
   }, '');
 
   imageContainer.insertAdjacentHTML('beforeEnd', mark);
+}
+
+function failureLog(message) {
+  Notify.failure(message, { clickToClose: true });
 }
