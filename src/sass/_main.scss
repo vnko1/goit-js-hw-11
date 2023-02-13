@@ -7,12 +7,40 @@
     padding: 10px;
     margin-right: -4px;
     border: none;
+    outline: none;
   }
-  button {
-    padding: 10px 20px;
+}
 
-    cursor: pointer;
-    background-color: grey;
-    border: none;
+button {
+  padding: 10px 20px;
+
+  cursor: pointer;
+  background-color: grey;
+  border: none;
+}
+
+.gallery {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+
+.load-more {
+  display: block;
+  margin: 0 auto;
+}
+
+.hidden {
+  display: none;
+}
+
+.info {
+  display: flex;
+  justify-content: space-between;
+
+  &-item {
+    display: flex;
+    flex-direction: column;
   }
 }
