@@ -46,8 +46,8 @@ function onHandleClick() {
     .catch(error => failureLog(error));
 }
 
-async function fetchData() {
-  return await fetchImages.getImage().then(data => {
+function fetchData() {
+  return fetchImages.getImage().then(data => {
     if (data.hits.length === 0) {
       failureLog(noMatchMessage);
       return;
