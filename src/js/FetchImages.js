@@ -44,7 +44,6 @@ export default class FetchImages {
     });
 
     const { data } = await axios.get(`${BASE_URL}?${params}`);
-
     this.totalHits = data.totalHits;
     return data;
   }
