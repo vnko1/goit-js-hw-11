@@ -1,6 +1,6 @@
 const axios = require('axios').default;
 
-const BASE_URL = 'https://pixabay.com/api/';
+const BASE_URL = 'https://pixabay.com';
 const API_KEY = '32961212-2ce7a37f9a51859c3f04fb788';
 
 export default class FetchImages {
@@ -43,7 +43,7 @@ export default class FetchImages {
       per_page: this.getPerPageValue(),
     });
 
-    const { data } = await axios.get(`${BASE_URL}?${params}`);
+    const { data } = await axios.get(`${BASE_URL}/api/?${params}`);
 
     this.totalHits = data.totalHits;
     return data;
