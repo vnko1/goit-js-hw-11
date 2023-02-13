@@ -2,13 +2,16 @@ import { Notify } from 'notiflix';
 import SimpleLightbox from 'simplelightbox';
 import FetchImages from './js/FetchImages';
 import LoadMoreButton from './js/components/LoadMoreButton';
+import 'simplelightbox/dist/simple-lightbox.min.css';
+import simpleLightbox from 'simplelightbox';
 
 const fetchImages = new FetchImages();
 const loadMoreButton = new LoadMoreButton('.load-more', true);
-console.log(loadMoreButton);
 
 const formEl = document.querySelector('.search-form');
 const imageContainer = document.querySelector('.gallery');
+
+console.log(simpleLightbox);
 
 formEl.addEventListener('submit', onHandleSubmit);
 loadMoreButton.button.addEventListener('click', onHandleClick);
@@ -21,7 +24,11 @@ async function onHandleSubmit(e) {
   loadMoreButton.hideBtn();
   imageContainer.innerHTML = '';
   await fetchData();
-  Notify.info(`Hooray! We found ${fetchImages.totalHits} images.`);
+
+  Notify.info(`Hooray! We found ${fetchImages.totalHits} images.`, {
+    clickToClose: true,
+  });
+  const lightbox = new SimpleLightbox('.gallery a');
 }
 
 function onHandleClick() {
@@ -49,7 +56,6 @@ async function fetchData() {
         );
         return;
       }
-
       markingUp(data.hits);
       loadMoreButton.showBtn();
     })
@@ -58,9 +64,17 @@ async function fetchData() {
 
 function markingUp(data) {
   const mark = data.reduce((acc, el) => {
-    const { webformatURL, tags, likes, views, comments, downloads } = el;
+    const {
+      webformatURL,
+      largeImageURL,
+      tags,
+      likes,
+      views,
+      comments,
+      downloads,
+    } = el;
     acc += `<div class="photo-card">
-  <img src="${webformatURL}" alt="${tags}" loading="lazy" width='400' heigth = '400'/>
+  <a href ="${largeImageURL}"><img src="${webformatURL}" alt="${tags}" loading="lazy"/></a>
   <div class="info">
     <p class="info-item">
       <b>Likes</b>
