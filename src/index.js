@@ -43,7 +43,7 @@ function onHandleClick() {
   }
   fetchData()
     .then(gallery => gallery.refresh())
-    .catch(error => failureLog(error.message));
+    .catch(error => failureLog(error));
 }
 
 async function fetchData() {
