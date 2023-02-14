@@ -61,7 +61,7 @@ function fetchData() {
     }
     markingUp(data.hits);
 
-    if (fetchImages.perPage >= fetchImages.totalHits) loadMoreButton.hideBtn();
+    if (fetchImages.perPage < fetchImages.totalHits) loadMoreButton.showBtn();
 
     return new SimpleLightbox('.gallery a');
   });
