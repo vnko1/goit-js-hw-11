@@ -13,6 +13,7 @@ export default class FetchImages {
   get query() {
     return this.querySearch;
   }
+
   set query(newQuery) {
     this.querySearch = newQuery;
   }
@@ -20,6 +21,7 @@ export default class FetchImages {
   updatePage() {
     this.page += 1;
   }
+
   resetPage() {
     this.page = 1;
   }
@@ -44,7 +46,6 @@ export default class FetchImages {
     });
 
     const { data } = await axios.get(`${BASE_URL}?${params}`);
-
     this.totalHits = data.totalHits;
     return data;
   }
