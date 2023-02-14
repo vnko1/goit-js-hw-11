@@ -4,6 +4,7 @@ export default class LoadMoreButton {
     if (isHidden) this.hideBtn();
     else this.showBtn();
   }
+
   getButton(selector) {
     return document.querySelector(selector);
   }

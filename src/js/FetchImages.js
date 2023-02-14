@@ -13,6 +13,7 @@ export default class FetchImages {
   get query() {
     return this.querySearch;
   }
+
   set query(newQuery) {
     this.querySearch = newQuery;
   }
@@ -20,6 +21,7 @@ export default class FetchImages {
   updatePage() {
     this.page += 1;
   }
+
   resetPage() {
     this.page = 1;
   }
