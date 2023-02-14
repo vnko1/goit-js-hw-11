@@ -8,6 +8,7 @@ const noMatchMessage =
   'Sorry, there are no images matching your search query. Please try again.';
 const finishedImageMessage =
   "We're sorry, but you've reached the end of search results.";
+
 const fetchImages = new FetchImages();
 const loadMoreButton = new LoadMoreButton('.load-more', true);
 
@@ -19,28 +20,34 @@ loadMoreButton.button.addEventListener('click', onHandleClick);
 
 async function onHandleSubmit(e) {
   e.preventDefault();
+
   const { searchQuery } = e.currentTarget.elements;
-  fetchImages.query = searchQuery.value;
+  fetchImages.query = searchQuery.value.trim();
+
   fetchImages.resetPage();
   loadMoreButton.hideBtn();
   imageContainer.innerHTML = '';
-  await fetchData().catch(error => failureLog(error.message));
 
-  if (fetchImages.totalHits > 0) {
-    Notify.info(`Hooray! We found ${fetchImages.totalHits} images.`, {
-      clickToClose: true,
-    });
+  if (fetchImages.query !== '') {
+    await fetchData().catch(error => failureLog(error.message));
+    if (fetchImages.totalHits > 0) {
+      Notify.info(`Hooray! We found ${fetchImages.totalHits} images.`, {
+        clickToClose: true,
+      });
+    }
   }
 }
 
 function onHandleClick() {
   fetchImages.updatePage();
+
   const limit = fetchImages.page * fetchImages.perPage > fetchImages.totalHits;
   if (limit) {
     failureLog(finishedImageMessage);
     loadMoreButton.hideBtn();
     return;
   }
+
   fetchData()
     .then(gallery => gallery.refresh())
     .catch(error => failureLog(error));
@@ -53,7 +60,8 @@ function fetchData() {
       return;
     }
     markingUp(data.hits);
-    loadMoreButton.showBtn();
+
+    if (fetchImages.perPage <= fetchImages.totalHits) loadMoreButton.showBtn();
 
     return new SimpleLightbox('.gallery a');
   });
@@ -71,7 +79,7 @@ function markingUp(data) {
       downloads,
     } = el;
     acc += `<div class="photo-card">
-  <a href ="${largeImageURL}"><img src="${webformatURL}" alt="${tags}" loading="lazy"/></a>
+  <a href ="${largeImageURL}"><img src="${webformatURL}" alt="${tags}" width="300" height="200" loading="lazy"/></a>
   <div class="info">
     <p class="info-item">
       <b>Likes</b>
