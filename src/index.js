@@ -1,8 +1,10 @@
 import { Notify } from 'notiflix';
+import throttle from 'lodash.throttle';
 import SimpleLightbox from 'simplelightbox';
+import { Spinner } from 'spin.js';
 import FetchImages from './js/FetchImages';
-import LoadMoreButton from './js/components/LoadMoreButton';
 import 'simplelightbox/dist/simple-lightbox.min.css';
+import 'spin.js/spin.css';
 
 const noMatchMessage =
   'Sorry, there are no images matching your search query. Please try again.';
@@ -10,26 +12,31 @@ const finishedImageMessage =
   "We're sorry, but you've reached the end of search results.";
 
 const fetchImages = new FetchImages();
-const loadMoreButton = new LoadMoreButton('.load-more', true);
+const spinner = new Spinner({
+  color: 'teal',
+  position: 'fixed',
+  top: '50vh',
+  left: '50vw',
+});
 
 const formEl = document.querySelector('.search-form');
 const imageContainer = document.querySelector('.gallery');
 
 formEl.addEventListener('submit', onHandleSubmit);
-loadMoreButton.button.addEventListener('click', onHandleClick);
 
 async function onHandleSubmit(e) {
   e.preventDefault();
-
+  window.removeEventListener('scroll', onHandleScroll);
   const { searchQuery } = e.currentTarget.elements;
   fetchImages.query = searchQuery.value.trim();
 
   fetchImages.resetPage();
-  loadMoreButton.hideBtn();
   imageContainer.innerHTML = '';
 
   if (fetchImages.query !== '') {
     await fetchData().catch(error => failureLog(error.message));
+
+    window.addEventListener('scroll', throttle(onHandleScroll, 500));
     if (fetchImages.totalHits > 0) {
       Notify.info(`Hooray! We found ${fetchImages.totalHits} images.`, {
         clickToClose: true,
@@ -38,30 +45,35 @@ async function onHandleSubmit(e) {
   }
 }
 
-function onHandleClick() {
-  fetchImages.updatePage();
+function onHandleScroll() {
+  if (
+    window.scrollY + window.innerHeight >=
+    document.documentElement.scrollHeight
+  ) {
+    fetchImages.updatePage();
 
-  const limit = fetchImages.page * fetchImages.perPage > fetchImages.totalHits;
-  if (limit) {
-    failureLog(finishedImageMessage);
-    loadMoreButton.hideBtn();
-    return;
+    const limit =
+      fetchImages.page * fetchImages.perPage > fetchImages.totalHits;
+    if (limit) {
+      failureLog(finishedImageMessage);
+      return;
+    }
+
+    fetchData()
+      .then(gallery => gallery.refresh())
+      .catch(error => failureLog(error));
   }
-
-  fetchData()
-    .then(gallery => gallery.refresh())
-    .catch(error => failureLog(error));
 }
 
 function fetchData() {
+  spinner.spin(imageContainer);
   return fetchImages.getImage().then(data => {
     if (data.hits.length === 0) {
       failureLog(noMatchMessage);
       return;
     }
     markingUp(data.hits);
-
-    if (fetchImages.perPage < fetchImages.totalHits) loadMoreButton.showBtn();
+    spinner.stop();
 
     return new SimpleLightbox('.gallery a');
   });
