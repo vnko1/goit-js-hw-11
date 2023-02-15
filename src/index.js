@@ -42,7 +42,7 @@ async function onHandleSubmit(e) {
 
   simplelightbox = new SimpleLightbox('.gallery a');
 
-  window.addEventListener('scroll', throttle(onHandleScroll, 500));
+  window.addEventListener('scroll', throttle(onHandleScroll, 800));
 
   if (fetchImages.totalHits > 0) {
     Notify.info(`Hooray! We found ${fetchImages.totalHits} images.`, {
@@ -76,7 +76,6 @@ function onHandleScroll() {
 
 async function fetchData() {
   spinner.spin(imageContainer);
-  fetchImages.updateTotalPage();
 
   const { hits } = await fetchImages.getImage();
   if (hits.length === 0) {
@@ -85,6 +84,7 @@ async function fetchData() {
   }
 
   markingUp(hits);
+  fetchImages.updateTotalPage();
 }
 
 function markingUp(data) {
