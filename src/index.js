@@ -66,7 +66,7 @@ function onHandleScroll() {
     }
 
     fetchData()
-      .catch(error => failureLog(error))
+      .catch(error => failureLog(error.message))
       .finally(() => {
         spinner.stop();
         simplelightbox.refresh();
