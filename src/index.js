@@ -1,7 +1,7 @@
 import { Notify } from 'notiflix';
+import { Spinner } from 'spin.js';
 import throttle from 'lodash.throttle';
 import SimpleLightbox from 'simplelightbox';
-import { Spinner } from 'spin.js';
 import FetchImages from './js/FetchImages';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 import 'spin.js/spin.css';
@@ -34,20 +34,20 @@ async function onHandleSubmit(e) {
   fetchImages.resetPage();
   imageContainer.innerHTML = '';
 
-  if (fetchImages.query !== '') {
-    await fetchData()
-      .catch(error => failureLog(error.message))
-      .finally(() => spinner.stop());
+  if (fetchImages.query === '') return;
 
-    simplelightbox = new SimpleLightbox('.gallery a');
+  await fetchData()
+    .catch(error => failureLog(error.message))
+    .finally(() => spinner.stop());
 
-    window.addEventListener('scroll', throttle(onHandleScroll, 500));
+  simplelightbox = new SimpleLightbox('.gallery a');
 
-    if (fetchImages.totalHits > 0) {
-      Notify.info(`Hooray! We found ${fetchImages.totalHits} images.`, {
-        clickToClose: true,
-      });
-    }
+  window.addEventListener('scroll', throttle(onHandleScroll, 500));
+
+  if (fetchImages.totalHits > 0) {
+    Notify.info(`Hooray! We found ${fetchImages.totalHits} images.`, {
+      clickToClose: true,
+    });
   }
 }
 
@@ -58,10 +58,11 @@ function onHandleScroll() {
   ) {
     fetchImages.updatePage();
 
-    const limit =
-      fetchImages.page * fetchImages.perPage >= fetchImages.totalHits;
-    if (limit) {
+    const isLimit = fetchImages.totalPage > fetchImages.totalHits;
+
+    if (isLimit) {
       failureLog(finishedImageMessage);
+      return;
     }
 
     fetchData()
@@ -73,15 +74,17 @@ function onHandleScroll() {
   }
 }
 
-function fetchData() {
+async function fetchData() {
   spinner.spin(imageContainer);
-  return fetchImages.getImage().then(data => {
-    if (data.hits.length === 0) {
-      failureLog(noMatchMessage);
-      return;
-    }
-    markingUp(data.hits);
-  });
+  fetchImages.updateTotalPage();
+
+  const { hits } = await fetchImages.getImage();
+  if (hits.length === 0) {
+    failureLog(noMatchMessage);
+    return;
+  }
+
+  markingUp(hits);
 }
 
 function markingUp(data) {

@@ -7,9 +7,11 @@ export default class FetchImages {
   constructor() {
     this.querySearch = '';
     this.page = 1;
-    this.perPage = 40;
+    this.perPage = 50;
     this.totalHits = null;
+    this.totalPage = this.perPage;
   }
+
   get query() {
     return this.querySearch;
   }
@@ -35,7 +37,15 @@ export default class FetchImages {
   }
 
   setPerPageValue(newValue) {
-    this.perPageValue = newValue;
+    this.perPage = newValue;
+  }
+
+  getTotalPage() {
+    return this.totalPage;
+  }
+
+  updateTotalPage() {
+    this.totalPage += this.perPage;
   }
 
   async getImage() {
