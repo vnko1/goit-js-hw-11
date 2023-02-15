@@ -35,10 +35,13 @@ async function onHandleSubmit(e) {
   imageContainer.innerHTML = '';
 
   if (fetchImages.query === '') return;
+  try {
+    await fetchData();
+  } catch (error) {
+    failureLog(error.message);
+  }
 
-  await fetchData()
-    .catch(error => failureLog(error.message))
-    .finally(() => spinner.stop());
+  spinner.stop();
 
   simplelightbox = new SimpleLightbox('.gallery a');
 
@@ -51,7 +54,7 @@ async function onHandleSubmit(e) {
   }
 }
 
-function onHandleScroll() {
+async function onHandleScroll() {
   if (
     window.scrollY + window.innerHeight >=
     document.documentElement.scrollHeight
@@ -64,13 +67,14 @@ function onHandleScroll() {
       failureLog(finishedImageMessage);
       return;
     }
+    try {
+      await fetchData();
+    } catch (error) {
+      failureLog(error.message);
+    }
 
-    fetchData()
-      .catch(error => failureLog(error.message))
-      .finally(() => {
-        spinner.stop();
-        simplelightbox.refresh();
-      });
+    spinner.stop();
+    simplelightbox.refresh();
   }
 }
 
