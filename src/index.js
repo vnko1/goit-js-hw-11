@@ -18,6 +18,7 @@ const spinner = new Spinner({
   top: '50vh',
   left: '50vw',
 });
+let simplelightbox = null;
 
 const formEl = document.querySelector('.search-form');
 const imageContainer = document.querySelector('.gallery');
@@ -34,9 +35,14 @@ async function onHandleSubmit(e) {
   imageContainer.innerHTML = '';
 
   if (fetchImages.query !== '') {
-    await fetchData().catch(error => failureLog(error.message));
+    await fetchData()
+      .catch(error => failureLog(error.message))
+      .finally(() => spinner.stop());
+
+    simplelightbox = new SimpleLightbox('.gallery a');
 
     window.addEventListener('scroll', throttle(onHandleScroll, 500));
+
     if (fetchImages.totalHits > 0) {
       Notify.info(`Hooray! We found ${fetchImages.totalHits} images.`, {
         clickToClose: true,
@@ -53,15 +59,17 @@ function onHandleScroll() {
     fetchImages.updatePage();
 
     const limit =
-      fetchImages.page * fetchImages.perPage > fetchImages.totalHits;
+      fetchImages.page * fetchImages.perPage >= fetchImages.totalHits;
     if (limit) {
       failureLog(finishedImageMessage);
-      return;
     }
 
     fetchData()
-      .then(gallery => gallery.refresh())
-      .catch(error => failureLog(error));
+      .catch(error => failureLog(error))
+      .finally(() => {
+        spinner.stop();
+        simplelightbox.refresh();
+      });
   }
 }
 
@@ -73,9 +81,6 @@ function fetchData() {
       return;
     }
     markingUp(data.hits);
-    spinner.stop();
-
-    return new SimpleLightbox('.gallery a');
   });
 }
 

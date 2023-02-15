@@ -34,6 +34,10 @@ export default class FetchImages {
     return this.perPage;
   }
 
+  setPerPageValue(newValue) {
+    this.perPageValue = newValue;
+  }
+
   async getImage() {
     const params = new URLSearchParams({
       key: API_KEY,
