@@ -23,8 +23,9 @@ let simplelightbox = null;
 const formEl = document.querySelector('.search-form');
 const imageContainer = document.querySelector('.gallery');
 
+const throttledScroll = throttle(onHandleScroll, 800);
+
 formEl.addEventListener('submit', onHandleSubmit);
-window.addEventListener('scroll', throttle(onHandleScroll, 800));
 
 async function onHandleSubmit(e) {
   e.preventDefault();
@@ -33,6 +34,7 @@ async function onHandleSubmit(e) {
 
   fetchImages.resetPage();
   imageContainer.innerHTML = '';
+  window.removeEventListener('scroll', throttledScroll);
 
   fetchImages.setPerPageValue(40);
   fetchImages.totalPage = fetchImages.getPerPageValue();
@@ -45,7 +47,7 @@ async function onHandleSubmit(e) {
   }
 
   spinner.stop();
-
+  window.addEventListener('scroll', throttledScroll);
   simplelightbox = new SimpleLightbox('.gallery a');
 
   if (fetchImages.totalHits > 0) {
