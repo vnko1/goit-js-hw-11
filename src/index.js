@@ -43,8 +43,9 @@ async function onHandleSubmit(e) {
 function onHandleClick() {
   fetchImages.updatePage();
 
-  const limit = fetchImages.page * fetchImages.perPage > fetchImages.totalHits;
-  if (limit) {
+  const isLimit = fetchImages.totalPage > fetchImages.totalHits;
+
+  if (isLimit) {
     failureLog(finishedImageMessage);
     loadMoreButton.hideBtn();
     return;
