@@ -24,10 +24,10 @@ const formEl = document.querySelector('.search-form');
 const imageContainer = document.querySelector('.gallery');
 
 formEl.addEventListener('submit', onHandleSubmit);
+window.addEventListener('scroll', throttle(onHandleScroll, 800));
 
 async function onHandleSubmit(e) {
   e.preventDefault();
-  window.removeEventListener('scroll', onHandleScroll);
   const { searchQuery } = e.currentTarget.elements;
   fetchImages.query = searchQuery.value.trim();
 
@@ -44,8 +44,6 @@ async function onHandleSubmit(e) {
   spinner.stop();
 
   simplelightbox = new SimpleLightbox('.gallery a');
-
-  window.addEventListener('scroll', throttle(onHandleScroll, 800));
 
   if (fetchImages.totalHits > 0) {
     Notify.info(`Hooray! We found ${fetchImages.totalHits} images.`, {
