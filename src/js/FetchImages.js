@@ -9,7 +9,7 @@ export default class FetchImages {
     this.page = 1;
     this.perPage = 40;
     this.totalHits = null;
-    this.totalPage = this.perPage;
+    this.totalPage = this.getPerPageValue();
   }
 
   get query() {
@@ -58,7 +58,7 @@ export default class FetchImages {
       page: this.getPageValue(),
       per_page: this.getPerPageValue(),
     });
-   
+
     const { data } = await axios.get(`${BASE_URL}?${params}`);
     this.totalHits = data.totalHits;
     if (this.totalPage === 480) this.setPerPageValue(20);
