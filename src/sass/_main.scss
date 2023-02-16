@@ -1,12 +1,16 @@
 .search-form {
+  display: flex;
   padding: 20px 0;
+  justify-content: center;
+  gap: 0;
   margin-bottom: 10px;
   text-align: center;
   background-color: teal;
 
   input {
     padding: 10px;
-    margin-right: -4px;
+    display: block;
+
     border: none;
     outline: none;
   }
@@ -22,8 +26,19 @@ button {
 
 .gallery {
   display: flex;
+
+  gap: 20px;
   flex-wrap: wrap;
   justify-content: space-around;
+}
+
+.photo-card {
+  padding: 10px;
+  overflow: hidden;
+  box-shadow: -20px 7px 35px -16px rgba(58, 64, 64, 1);
+  -webkit-box-shadow: -20px 7px 35px -16px rgba(58, 64, 64, 1);
+  -moz-box-shadow: -20px 7px 35px -16px rgba(58, 64, 64, 1);
+  border-radius: 2px;
 }
 
 .load-more {
