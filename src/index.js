@@ -11,6 +11,7 @@ const finishedImageMessage =
 
 const fetchImages = new FetchImages();
 const loadMoreButton = new LoadMoreButton('.load-more', true);
+let simplelightbox = null;
 
 const formEl = document.querySelector('.search-form');
 const imageContainer = document.querySelector('.gallery');
