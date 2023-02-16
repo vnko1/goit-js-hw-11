@@ -34,6 +34,9 @@ async function onHandleSubmit(e) {
   fetchImages.resetPage();
   imageContainer.innerHTML = '';
 
+  fetchImages.setPerPageValue(40);
+  fetchImages.totalPage = fetchImages.getPerPageValue();
+
   if (fetchImages.query === '') return;
 
   await fetchData()

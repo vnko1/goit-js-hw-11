@@ -9,7 +9,7 @@ export default class FetchImages {
     this.page = 1;
     this.perPage = 40;
     this.totalHits = null;
-    this.totalPage = this.perPage;
+    this.totalPage = this.getPerPageValue();
   }
 
   get query() {
