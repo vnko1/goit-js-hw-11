@@ -1,4 +1,4 @@
-const axios = require('axios').default;
+import axios from 'axios';
 
 const BASE_URL = 'https://pixabay.com/api/';
 const API_KEY = '32961212-2ce7a37f9a51859c3f04fb788';
@@ -9,7 +9,9 @@ export default class FetchImages {
     this.page = 1;
     this.perPage = 40;
     this.totalHits = null;
+    this.totalPage = this.perPage;
   }
+
   get query() {
     return this.querySearch;
   }
@@ -34,6 +36,18 @@ export default class FetchImages {
     return this.perPage;
   }
 
+  setPerPageValue(newValue) {
+    this.perPage = newValue;
+  }
+
+  getTotalPage() {
+    return this.totalPage;
+  }
+
+  updateTotalPage() {
+    this.totalPage += this.perPage;
+  }
+
   async getImage() {
     const params = new URLSearchParams({
       key: API_KEY,
@@ -47,6 +61,7 @@ export default class FetchImages {
 
     const { data } = await axios.get(`${BASE_URL}?${params}`);
     this.totalHits = data.totalHits;
+    if (this.totalPage === 480) this.setPerPageValue(20);
     return data;
   }
 }
