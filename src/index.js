@@ -55,7 +55,7 @@ function onHandleClick() {
 
   fetchData()
     .catch(error => failureLog(error))
-    .finally(() => gallery.refresh());
+    .finally(() => simplelightbox.refresh());
 }
 
 function fetchData() {
