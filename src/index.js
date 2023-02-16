@@ -26,6 +26,8 @@ async function onHandleSubmit(e) {
 
   fetchImages.resetPage();
   loadMoreButton.hideBtn();
+  fetchImages.totalPage = 40;
+  fetchImages.setPerPageValue(40);
   imageContainer.innerHTML = '';
 
   if (fetchImages.query !== '') {
@@ -60,6 +62,7 @@ function fetchData() {
       return;
     }
     markingUp(data.hits);
+    fetchImages.updateTotalPage();
 
     if (fetchImages.perPage < fetchImages.totalHits) loadMoreButton.showBtn();
 
