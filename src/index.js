@@ -33,6 +33,7 @@ async function onHandleSubmit(e) {
 
   if (fetchImages.query !== '') {
     await fetchData().catch(error => failureLog(error.message));
+    simplelightbox = new SimpleLightbox('.gallery a');
     if (fetchImages.totalHits > 0) {
       Notify.info(`Hooray! We found ${fetchImages.totalHits} images.`, {
         clickToClose: true,
@@ -53,8 +54,8 @@ function onHandleClick() {
   }
 
   fetchData()
-    .then(gallery => gallery.refresh())
-    .catch(error => failureLog(error));
+    .catch(error => failureLog(error))
+    .finally(() => gallery.refresh());
 }
 
 function fetchData() {
@@ -67,8 +68,6 @@ function fetchData() {
     fetchImages.updateTotalPage();
 
     if (fetchImages.perPage < fetchImages.totalHits) loadMoreButton.showBtn();
-
-    return new SimpleLightbox('.gallery a');
   });
 }
 
