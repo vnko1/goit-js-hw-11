@@ -66,7 +66,7 @@ function onHandleClick() {
 
 function fetchData() {
   return fetchImages.getImage().then(data => {
-    if (!data.hits.length) {
+    if (!fetchImages.totalHits) {
       failureLog(noMatchMessage);
       return;
     }
