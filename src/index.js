@@ -47,7 +47,7 @@ async function onHandleSubmit(e) {
 
   simplelightbox = new SimpleLightbox('.gallery a');
   window.addEventListener('scroll', throttledScroll);
-  if (fetchImages.totalHits > 0) {
+  if (fetchImages.totalHits) {
     Notify.info(`Hooray! We found ${fetchImages.totalHits} images.`, {
       clickToClose: true,
     });
@@ -60,11 +60,17 @@ function onHandleScroll() {
     document.documentElement.scrollHeight
   ) {
     fetchImages.updatePage();
+    const isLimitPage = fetchImages.totalPage > 500;
     const isLimit = fetchImages.totalPage > fetchImages.totalHits;
+    fetchImages.totalPage;
+
+    if (isLimitPage) {
+      failureLog(finishedImageMessage);
+      return;
+    }
 
     if (isLimit) {
       failureLog(finishedImageMessage);
-      return;
     }
 
     fetchData()
@@ -80,7 +86,7 @@ async function fetchData() {
   spinner.spin(imageContainer);
 
   const { hits } = await fetchImages.getImage();
-  if (hits.length === 0) {
+  if (!hits.length) {
     failureLog(noMatchMessage);
 
     return;
