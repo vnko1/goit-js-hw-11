@@ -64,12 +64,19 @@ async function onHandleScroll() {
   ) {
     fetchImages.updatePage();
 
+    const isLimitPage = fetchImages.totalPage > 500;
     const isLimit = fetchImages.totalPage > fetchImages.totalHits;
+    fetchImages.totalPage;
 
-    if (isLimit) {
+    if (isLimitPage) {
       failureLog(finishedImageMessage);
       return;
     }
+
+    if (isLimit) {
+      failureLog(finishedImageMessage);
+    }
+
     try {
       await fetchData();
     } catch (error) {
