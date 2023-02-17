@@ -86,7 +86,7 @@ async function fetchData() {
   spinner.spin(imageContainer);
 
   const { hits } = await fetchImages.getImage();
-  if (!hits.length) {
+  if (!fetchImages.totalHits) {
     failureLog(noMatchMessage);
 
     return;
