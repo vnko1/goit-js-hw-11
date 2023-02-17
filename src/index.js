@@ -50,7 +50,7 @@ async function onHandleSubmit(e) {
   window.addEventListener('scroll', throttledScroll);
   simplelightbox = new SimpleLightbox('.gallery a');
 
-  if (fetchImages.totalHits > 0) {
+  if (fetchImages.totalHits) {
     Notify.info(`Hooray! We found ${fetchImages.totalHits} images.`, {
       clickToClose: true,
     });
@@ -92,7 +92,7 @@ async function fetchData() {
   spinner.spin(imageContainer);
 
   const { hits } = await fetchImages.getImage();
-  if (hits.length === 0) {
+  if (!hits.length) {
     failureLog(noMatchMessage);
     return;
   }
