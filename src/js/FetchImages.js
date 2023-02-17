@@ -60,6 +60,7 @@ export default class FetchImages {
     });
 
     const { data } = await axios.get(`${BASE_URL}?${params}`);
+
     this.totalHits = data.totalHits;
     if (this.totalPage === 480) this.setPerPageValue(20);
     return data;
