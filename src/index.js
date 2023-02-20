@@ -45,23 +45,27 @@ async function onHandleSubmit(e) {
 function onHandleClick() {
   fetchImages.updatePage();
   const isLimitPage = fetchImages.totalPage > 500;
-  const isLimit = fetchImages.totalPage > fetchImages.totalHits;
+  const isLimit = fetchImages.totalPage >= fetchImages.totalHits;
   fetchImages.totalPage;
 
-  if (isLimitPage) {
-    loadMoreButton.hideBtn();
-    failureLog(finishedImageMessage);
-    return;
-  }
+  // if (isLimitPage) {
+  //   failureLog(finishedImageMessage);
+  //   return;
+  // }
 
-  if (isLimit) {
-    failureLog(finishedImageMessage);
-    loadMoreButton.hideBtn();
-  }
+  // if (isLimit) {
+  //   failureLog(finishedImageMessage);
+  // }
 
   fetchData()
     .catch(error => failureLog(error))
-    .finally(() => simplelightbox.refresh());
+    .finally(() => {
+      simplelightbox.refresh();
+      if (isLimit) {
+        loadMoreButton.hideBtn();
+        failureLog(finishedImageMessage);
+      }
+    });
 }
 
 function fetchData() {
