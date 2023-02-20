@@ -29,6 +29,7 @@ formEl.addEventListener('submit', onHandleSubmit);
 
 async function onHandleSubmit(e) {
   e.preventDefault();
+
   const { searchQuery } = e.currentTarget.elements;
   fetchImages.query = searchQuery.value.trim();
 
@@ -89,7 +90,7 @@ async function onHandleScroll() {
 }
 
 async function fetchData() {
-  spinner.spin(imageContainer);
+  spinner.spin(document.body);
 
   const { hits } = await fetchImages.getImage();
   if (!fetchImages.totalHits) {
@@ -137,8 +138,20 @@ function markingUp(data) {
   }, '');
 
   imageContainer.insertAdjacentHTML('beforeEnd', mark);
+  smoothScroll();
 }
 
 function failureLog(message) {
   Notify.failure(message, { clickToClose: true });
+}
+
+function smoothScroll() {
+  const { height: cardHeight } = document
+    .querySelector('.gallery')
+    .lastElementChild.getBoundingClientRect();
+
+  window.scrollBy({
+    top: cardHeight * 2,
+    behavior: 'smooth',
+  });
 }
