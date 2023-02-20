@@ -22,6 +22,7 @@ let simplelightbox = null;
 
 const formEl = document.querySelector('.search-form');
 const imageContainer = document.querySelector('.gallery');
+
 const throttledScroll = throttle(onHandleScroll, 800);
 
 formEl.addEventListener('submit', onHandleSubmit);
@@ -40,13 +41,16 @@ async function onHandleSubmit(e) {
   fetchImages.totalPage = fetchImages.getPerPageValue();
 
   if (fetchImages.query === '') return;
+  try {
+    await fetchData();
+  } catch (error) {
+    failureLog(error.message);
+  }
 
-  await fetchData()
-    .catch(error => failureLog(error.message))
-    .finally(() => spinner.stop());
-
-  simplelightbox = new SimpleLightbox('.gallery a');
+  spinner.stop();
   window.addEventListener('scroll', throttledScroll);
+  simplelightbox = new SimpleLightbox('.gallery a');
+
   if (fetchImages.totalHits) {
     Notify.info(`Hooray! We found ${fetchImages.totalHits} images.`, {
       clickToClose: true,
@@ -54,12 +58,13 @@ async function onHandleSubmit(e) {
   }
 }
 
-function onHandleScroll() {
+async function onHandleScroll() {
   if (
     window.scrollY + window.innerHeight >=
     document.documentElement.scrollHeight
   ) {
     fetchImages.updatePage();
+
     const isLimitPage = fetchImages.totalPage > 500;
     const isLimit = fetchImages.totalPage > fetchImages.totalHits;
     fetchImages.totalPage;
@@ -73,22 +78,23 @@ function onHandleScroll() {
       failureLog(finishedImageMessage);
     }
 
-    fetchData()
-      .catch(error => failureLog(error.message))
-      .finally(() => {
-        spinner.stop();
-        simplelightbox.refresh();
-      });
+    try {
+      await fetchData();
+    } catch (error) {
+      failureLog(error.message);
+    }
+
+    spinner.stop();
+    simplelightbox.refresh();
   }
 }
 
 async function fetchData() {
-  spinner.spin(imageContainer);
+  spinner.spin(document.body);
 
   const { hits } = await fetchImages.getImage();
   if (!fetchImages.totalHits) {
     failureLog(noMatchMessage);
-
     return;
   }
 
@@ -132,8 +138,20 @@ function markingUp(data) {
   }, '');
 
   imageContainer.insertAdjacentHTML('beforeEnd', mark);
+  smoothScroll();
 }
 
 function failureLog(message) {
   Notify.failure(message, { clickToClose: true });
+}
+
+function smoothScroll() {
+  const { height: cardHeight } = document
+    .querySelector('.gallery')
+    .lastElementChild.getBoundingClientRect();
+
+  window.scrollBy({
+    top: cardHeight * 2,
+    behavior: 'smooth',
+  });
 }

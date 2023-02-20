@@ -58,7 +58,7 @@ export default class FetchImages {
       page: this.getPageValue(),
       per_page: this.getPerPageValue(),
     });
-
+   
     const { data } = await axios.get(`${BASE_URL}?${params}`);
 
     this.totalHits = data.totalHits;
