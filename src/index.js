@@ -138,20 +138,8 @@ function markingUp(data) {
   }, '');
 
   imageContainer.insertAdjacentHTML('beforeEnd', mark);
-  smoothScroll();
 }
 
 function failureLog(message) {
   Notify.failure(message, { clickToClose: true });
-}
-
-function smoothScroll() {
-  const { height: cardHeight } = document
-    .querySelector('.gallery')
-    .lastElementChild.getBoundingClientRect();
-
-  window.scrollBy({
-    top: cardHeight * 2,
-    behavior: 'smooth',
-  });
 }
